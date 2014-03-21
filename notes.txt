@@ -1,0 +1,3 @@
+For individual slides, you can reset each animation using #divname.past.present and .future
+How does this differ from calling impress().goto(0)?
+
