@@ -260,6 +260,8 @@
         var root = byId( rootId );
         var canvas = document.createElement("div");
         
+        var blackedOut = false;
+        
         var initialized = false;
         
         // STEP EVENTS
@@ -427,11 +429,12 @@
         // `goto` API function that moves to step given with `el` parameter (by index, id or element),
         // with a transition `duration` optionally given as second parameter.
         var goto = function ( el, duration ) {
-            
             if ( !initialized || !(el = getStep(el)) ) {
                 // presentation not initialized or given element is not a step
                 return false;
             }
+            
+            removeBlackout();
             
             // Sometimes it's possible to trigger focus on first link with some keyboard action.
             // Browser in such a case tries to scroll the page to make this element visible
@@ -557,6 +560,21 @@
             return el;
         };
         
+        var removeBlackout = function() {
+        	if (blackedOut) {
+        		css(canvas, {
+        			display: 'block'
+        		})
+        		blackedOut = false
+        	}
+        }
+
+        var blackout = function() {
+        	css(canvas, {
+        		display: (blackedOut = !blackedOut) ? 'none' : 'block'
+        	})
+        }
+        
         // `prev` API function goes to previous step (in document order)
         var prev = function () {
             var prev = steps.indexOf( activeStep ) - 1;
@@ -641,6 +659,7 @@
         
         // store and return API for given impress.js root element
         return (roots[ "impress-root-" + rootId ] = {
+        	blackout: blackout,
             init: init,
             goto: goto,
             next: next,
@@ -690,7 +709,7 @@
         
         // Prevent default keydown action when one of supported key is pressed.
         document.addEventListener("keydown", function ( event ) {
-            if ( event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40) ) {
+        	if ( event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40) || event.keyCode === 66) {
                 event.preventDefault();
             }
         }, false);
@@ -711,7 +730,7 @@
         //   as another way to moving to next step... And yes, I know that for the sake of
         //   consistency I should add [shift+tab] as opposite action...
         document.addEventListener("keyup", function ( event ) {
-            if ( event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40) ) {
+        	if ( event.keyCode === 9 || ( event.keyCode >= 32 && event.keyCode <= 34 ) || (event.keyCode >= 37 && event.keyCode <= 40) || event.keyCode === 66) {
                 switch( event.keyCode ) {
                     case 33: // pg up
                     case 37: // left
@@ -725,6 +744,9 @@
                     case 40: // down
                              api.next();
                              break;
+                    case 66: // b key
+                    		 api.blackout();
+                    		 break;
                 }
                 
                 event.preventDefault();
