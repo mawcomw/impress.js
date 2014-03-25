@@ -1,3 +1,22 @@
 For individual slides, you can reset each animation using #divname.past.present and .future
 How does this differ from calling impress().goto(0)?
 
+1: impress:starttransition => Fire an event on every start of a transition, including the current node (or null if not set) and the next element.
+
+2: Steps as event detail for impress:init => needed for the progress and in the plugin development.
+
+3: Added powerpoint 'b' functionality to insta-hide the screen. Hiding is automatically removed by switching to a new slide. This allows the presenter to go on tangents, returning focus to them instead of the irrelevant slides.
+
+4: @niuage what you ask for is the way it works already (unless I misunderstood your suggestion).
+With this patch:
+step data-x="1000" data-y="1000" -> (x=1000, y=1000)
+step data-x="+=1000" -> (x=2000, y=1000)
+
+5: Alternative data assignment to HTML data attributes. Easier (for me) instead do it in the middle of HTML jungle. Also add possibility to provide data from external JS operations. Allowing usage like this:
+// 'slide1' and 'slide2' are step's id
+impress.init({
+    steps: {
+        slide1: { x: -125, y: 50, z: -125, rotate: 90, scale: 0.5 },
+        slide2: { x: 105, y: 50, z: -125, rotateX: 45, rotateY: -90, rotateZ: 45 }
+    }
+});
