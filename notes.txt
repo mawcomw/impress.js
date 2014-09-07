@@ -20,3 +20,5 @@ impress.init({
         slide2: { x: 105, y: 50, z: -125, rotateX: 45, rotateY: -90, rotateZ: 45 }
     }
 });
+
+6: read the README_substep.md
